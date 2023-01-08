@@ -2,3 +2,4 @@ scipy>=1.10.0
 numpy>=1.24.1
 uuid>=1.30
 flask>=2.2.2
+drawSvg>=1.9.0

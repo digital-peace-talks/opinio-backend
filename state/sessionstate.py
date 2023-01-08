@@ -40,17 +40,27 @@ class SessionState:
 
     def get_layout(self):
         coordinates = determine_coordinates(self.angles, self.radii)
+        non_connected = self._get_non_connected_nodes()
         return dict(
             nodes=[
                 self.nodes[idx]
                 | dict(
                     coord=coordinates[idx],
                     group=self.node_groups[self.nodes[idx]["label"]],
+                    connected=idx not in non_connected,
                 )
                 for idx in range(self.angles.size)
             ],
             edges=list(self.edges.values()),
         )
+
+    def _get_non_connected_nodes(self):
+        num_nodes = self.radii.size
+        non_connected_nodes = set(range(0, num_nodes))
+        for edge in self.edges.values():
+            non_connected_nodes.discard(edge["left"])
+            non_connected_nodes.discard(edge["right"])
+        return non_connected_nodes
 
     def get_edge(self, edge):
         desc = _canonical_edge_descriptor(edge)
@@ -61,11 +71,19 @@ class SessionState:
     def update_edge(self, edge_update):
         if "left" not in edge_update or "right" not in edge_update:
             raise Exception(f"Edge update is missing left and/or right property")
-        if not edge_update["dissent"] and not edge_update["respect"]:
+        if edge_update["dissent"] is None and edge_update["respect"] is None:
             raise Exception(f"Edge update is missing either a dissent or respect score")
         desc = _canonical_edge_descriptor(edge_update)
-        if desc not in self.edges and not (edge_update["dissent"] and edge_update["respect"]):
-            raise Exception(f"Adding new edges requires both dissent and respect parameters")
-        self.edges[desc] = self.edges.get(desc, {}) | {k:v for k,v in edge_update.items() if v}
+        if (
+            desc not in self.edges
+            and edge_update["dissent"] is None
+            and edge_update["respect"] is None
+        ):
+            raise Exception(
+                f"Adding new edges requires both dissent and respect parameters"
+            )
+        self.edges[desc] = self.edges.get(desc, {}) | {
+            k: v for k, v in edge_update.items() if v is not None
+        }
         self._update()
         return self.get_layout()

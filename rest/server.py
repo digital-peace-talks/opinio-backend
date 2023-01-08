@@ -1,8 +1,10 @@
 from flask import Flask
 
+from rest.svg_renderer import render_as_svg
 from state.sessions import Sessions
 from flask import abort
 from flask import request
+from flask import Response
 
 from state.sessionstate import SessionState
 
@@ -31,14 +33,21 @@ def get_edge(session_id):
     return session.get_edge(_get_req_edge(request.args))
 
 
-@app.route("/<session_id>/update", methods=['GET'])
+@app.route("/<session_id>/update", methods=["GET"])
 def update_get(session_id):
     session: SessionState = sessions.get_session(session_id)
     if not session:
         abort(404)
     return session.update_edge(_get_req_edge(request.args))
 
-@app.route("/<session_id>/update", methods=['POST'])
+
+@app.route("/<session_id>/update_svg", methods=["GET"])
+def update_get_svg(session_id):
+    data = update_get(session_id)
+    return Response(render_as_svg(data), mimetype="image/svg+xml")
+
+
+@app.route("/<session_id>/update", methods=["POST"])
 def update_post(session_id):
     session: SessionState = sessions.get_session(session_id)
     if not session:
@@ -47,10 +56,9 @@ def update_post(session_id):
 
 
 def _get_req_edge(args):
-    print("XXX", args)
     return dict(
-        left=args.get('left') and int(args.get('left')),
-        right=args.get('right') and int(args.get('right')),
-        dissent=args.get('dissent') and float(args.get('dissent')),
-        respect=args.get('respect') and float(args.get('respect'))
+        left=args.get("left") is not None and int(args.get("left")),
+        right=args.get("right") is not None and int(args.get("right")),
+        dissent=args.get("dissent") is not None and float(args.get("dissent")),
+        respect=args.get("respect") is not None and float(args.get("respect")),
     )

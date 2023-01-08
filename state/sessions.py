@@ -2,7 +2,6 @@ from state.sessionstate import SessionState
 
 
 class Sessions:
-
     def __init__(self):
         self.sessions = {}
 
