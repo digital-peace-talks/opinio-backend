@@ -63,14 +63,15 @@ def determine_radii(radii, edges):
 
 
 def determine_coordinates(angles, radii):
-
     def _round(coord):
         return int(10000 * coord) / 10000.0
 
     def _node_coords(idx):
         angle = angles[idx]
         radius = radii[idx]
-        return dict(x=_round(radius * math.cos(angle)), y=_round(radius * math.sin(angle)))
+        return dict(
+            x=_round(radius * math.cos(angle)), y=_round(radius * math.sin(angle))
+        )
 
     return [_node_coords(idx) for idx in range(angles.size)]
 
