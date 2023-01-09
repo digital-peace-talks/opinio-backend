@@ -1,10 +1,58 @@
-dissent: 0-10
-respect: -5 - 5
+# Polarizer backend
 
+## Installation
+### Clone repo
+```agsl
+git clone git@github.com:digital-peace-talks/polarizer-backend.git
+cd polarizer-backend
+```
+### Create virtualenv and install python dependencies
+```agsl
+python3 -m venv ./venv
+. ./venv/bin/activate
+pip install -r requirements.txt
 export PYTHONPATH=$(pwd)
+``` 
+
+## Usage
+### Start server
+```agsl
 flask --app rest/server run -p 4080
+```
+
+### Register new session (required for any further API interactions)
+```agsl
 http :4080/register_session
+```
+
+### Get current layout
+```agsl
+http ':4080/<session_id>/layout'
+```
+
+### Get an edge's value
+```agsl
 http ':4080/<session_id>/edge?left=33&right=39'
-http ':4080/e2e98f33-1ec4-41b6-92eb-49a0568df93a/update?left=1&right=2&dissent=123&respect=3'
-http POST ':4080/24acdeb1-5f82-4caa-8da6-0b4aeff16789/update' left=1 right=2 dissent=123 respect=1
-http://127.0.0.1:4080/488b0dda-b253-48a5-becc-83da76813722/update_svg?left=1&right=2&dissent=10&respect=-1
+```
+
+### Update an edge (returns updated graph)
+#### Parameter ranges:
+`dissent : 0 to 10`\
+`respect: -5 to 5`
+
+```agsl
+http ':4080/<session_id>/update?left=33&right=39&dissent=1&respect=3'
+```
+
+### Update an edge (POST version)
+```agsl
+http ':4080/<session_id>/update' left=33 right=39 dissent=1 respect=3
+```
+
+### Update an edge, returning an svg
+#### Parameter ranges:
+```agsl
+http ':4080/<session_id>/update_svg?left=33&right=39&dissent=1&respect=3'
+```
+
+(Sorry for the brevity :))
