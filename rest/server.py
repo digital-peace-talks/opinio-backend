@@ -1,6 +1,6 @@
 from flask import Flask
 
-from rest.svg_renderer import render_as_svg
+# from rest.svg_renderer import render_as_svg
 from state.sessions import Sessions
 from flask import abort
 from flask import request
@@ -10,6 +10,12 @@ from state.sessionstate import SessionState
 
 app = Flask(__name__)
 sessions = Sessions()
+
+
+@app.after_request
+def apply_caching(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 
 @app.route("/register_session")
@@ -41,10 +47,10 @@ def update_get(session_id):
     return session.update_edge(_get_req_edge(request.args))
 
 
-@app.route("/<session_id>/update_svg", methods=["GET"])
-def update_get_svg(session_id):
-    data = update_get(session_id)
-    return Response(render_as_svg(data), mimetype="image/svg+xml")
+# @app.route("/<session_id>/update_svg", methods=["GET"])
+# def update_get_svg(session_id):
+#     data = update_get(session_id)
+#     return Response(render_as_svg(data), mimetype="image/svg+xml")
 
 
 @app.route("/<session_id>/update", methods=["POST"])
