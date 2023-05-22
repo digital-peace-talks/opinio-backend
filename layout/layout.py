@@ -20,7 +20,8 @@ def determine_angles(angles, edges):
         error = 0
         for edge in edges.values():
             distance = _angle_distance(angle_vec, edge["left"], edge["right"])
-            error += abs(distance - _normalize_dissent(edge))  # pow?
+            # error += abs(distance - _normalize_dissent(edge))  # pow?
+            error += math.pow(distance - _normalize_dissent(edge), 2)  # pow?
         return error
 
     res = minimize(
