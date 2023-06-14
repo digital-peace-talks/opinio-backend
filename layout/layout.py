@@ -47,7 +47,7 @@ def determine_radii(radii, edges):
     sums = np.zeros(num_nodes)
     counts = np.zeros(num_nodes)
     for edge in edges.values():
-        score = _normalize_respect(edge) * (1.0 - _normalize_dissent(edge))
+        score = _normalize_respect(edge) * _normalize_dissent(edge)
         counts[edge["left"]] += 1
         counts[edge["right"]] += 1
         sums[edge["left"]] += score
