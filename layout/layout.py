@@ -59,7 +59,8 @@ def determine_radii(radii, edges):
         if i in non_connected_nodes or counts[i] == 0:
             radii[i] = 1
         else:
-            radii[i] = 1 - sums[i] / counts[i]
+            w = sums[i] / counts[i]
+            radii[i] = 1 - math.pow(w, 1.05) # Spread out things a little
     return radii
 
 
