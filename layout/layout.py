@@ -60,7 +60,7 @@ def determine_radii(radii, edges):
             radii[i] = 1
         else:
             w = sums[i] / counts[i]
-            radii[i] = 1 - math.pow(w, 1.05) # Spread out things a little
+            radii[i] = 1 - math.pow(w, 0.6) # Spread out things a little
     return radii
 
 
